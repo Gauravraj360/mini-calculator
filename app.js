@@ -1,59 +1,55 @@
 
-const input=document.querySelectorAll('.input');
-const operations=document.querySelectorAll('.op');
+const buttons=document.querySelectorAll('button');
 const display=document.querySelector('#display');
+const displayResult=document.querySelector('#result');
 let expression="";
-input.forEach(digit => {
-    digit.addEventListener('click',function(){
-        expression+=digit.innerHTML;
-        display.value=expression;
-        if(digit.innerHTML==='='){
+buttons.forEach(button => {
+    button.addEventListener('click',function(){
+        const operators = '+-*/';
+        const regexString = `[0-9${operators.replace('-', '\\-')}]+`;
+        const regex = new RegExp(regexString, 'g');
+        
+        if(button.innerHTML.match(regex)){
+            expression+=button.innerHTML;
+            display.value=expression;     
+        }
+        if(button.id==='equals'){
             const result=customEval(expression);
-            expression+=result.toString();
+            expression=result.toString();
+            displayResult.value=result.toString();
+        }
+        if(button.id==='clear'){
+            expression="";
+            display.value="";
+            displayResult.value="";
+        }
+        if(button.id==='backspace'){
+            expression=expression.slice(0,-1);
             display.value=expression;
         }
-    });
-   digit.onmouseenter = function(){
-    this.style.backgroundColor='lightblue';
-   }
-   digit.onmouseleave = function(){
-    this.style.backgroundColor='#f4f4f4';
-   }
-});
-
-operations.forEach(op => {
-    op.addEventListener('click',function(){
         
-        if(op.innerHTML==='C'){
-            expression="";
-        }
-        else{
-           expression+=op.innerHTML;
-        }
-        display.value=expression;
         
     });
-
-    op.onmouseenter = function(){
-        this.style.backgroundColor='lightblue';
-       }
-    op.onmouseleave = function(){
-    this.style.backgroundColor='#f4f4f4';
-    }
+    
+   
 });
-
 document.addEventListener('keyup', function(e){
-    const operators = '+-*/=';
+    const operators = '+-*/';
     const regexString = `[0-9${operators.replace('-', '\\-')}]+`;
     const regex = new RegExp(regexString, 'g');
-
+   
     if(e.key==='=' || e.key==='Enter'){
         const result=customEval(expression);
         expression=result.toString();
-        display.value=expression;
+        displayResult.value=result.toString();
     }
     else if(e.key==='c'){
         expression="";
+        display.value=expression;
+        displayResult.value="";
+    }
+    else if(e.key==='Backspace'){
+        expression=expression.slice(0,-1);
         display.value=expression;
     }
 
