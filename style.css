@@ -4,7 +4,7 @@ body,html{
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-   align-items: center;
+    align-items: center;
 }
 .header{
     text-align: center;
@@ -94,11 +94,11 @@ button{
     flex:2.5;
 }
 button:hover {
-    background-color: goldenrod;
+    background-color: #00b4d8;
 }
 #clear:hover,
 #backspace:hover{
-    background-color: rgb(247, 123, 123);
+    background-color: #219ebc;
 }
 #divide:hover,
 #multiply:hover,
@@ -107,7 +107,7 @@ button:hover {
     background-color: aqua;
 }
 #equals:hover{
-    background-color: lightgreen;
+    background-color:#ffb703;
 }
 
 

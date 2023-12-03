@@ -9,19 +9,15 @@ buttons.forEach(button => {
         const regexString = `[0-9${operators.replace('-', '\\-')}]+`;
         const regex = new RegExp(regexString, 'g');
         
-        if(button.innerHTML.match(regex)){
+        if(button.innerHTML.match(regex)){ 
             expression+=button.innerHTML;
-            display.value=expression;     
+            display.value=expression;    
         }
         if(button.id==='equals'){
-            const result=customEval(expression);
-            expression=result.toString();
-            displayResult.value=result.toString();
+           evaluateExpression();
         }
         if(button.id==='clear'){
-            expression="";
-            display.value="";
-            displayResult.value="";
+            clearDisplay();
         }
         if(button.id==='backspace'){
             expression=expression.slice(0,-1);
@@ -39,14 +35,10 @@ document.addEventListener('keyup', function(e){
     const regex = new RegExp(regexString, 'g');
    
     if(e.key==='=' || e.key==='Enter'){
-        const result=customEval(expression);
-        expression=result.toString();
-        displayResult.value=result.toString();
+       evaluateExpression();
     }
     else if(e.key==='c'){
-        expression="";
-        display.value=expression;
-        displayResult.value="";
+        clearDisplay();
     }
     else if(e.key==='Backspace'){
         expression=expression.slice(0,-1);
@@ -59,6 +51,20 @@ document.addEventListener('keyup', function(e){
     }
 });
 
+function evaluateExpression() {
+    const result = customEval(expression);
+    if (typeof result === 'string') {
+        displayResult.value = result; // Show error message
+    } else {
+        displayResult.value = result.toString(); // Show result
+    }
+}
+function clearDisplay() {
+    expression = "";
+    display.value = "";
+    displayResult.value = "";
+}
+
 function customEval(expression) {
     const operator="+-*/";
     const operators = /[+\-*/]/;
@@ -68,34 +74,48 @@ function customEval(expression) {
     
     let result = 0;
     let currentOperator = '+';
+    let consecutiveOperators=false;
+    let errorMessage='';
 
     if (!tokens) return NaN; // Handling invalid input
 
     tokens.forEach(token => {
         if (operator.includes(token)) {
             currentOperator = token;
+            console.log(currentOperator);
+            if(consecutiveOperators===true){
+                errorMessage = 'Error: Multiple consecutive operators';
+            }
+            consecutiveOperators=true;
         } else {
+            consecutiveOperators=false;
             const number = parseFloat(token);
             if (!isNaN(number)) {
-                switch (currentOperator) {
-                    case '+':
-                        result += number;
-                        break;
-                    case '-':
-                        result -= number;
-                        break;
-                    case '*':
-                        result *= number;
-                        break;
-                    case '/':
-                        result /= number;
-                        break;
-                    default:
-                        break;
+                if(currentOperator==='/' && number===0){
+                    errorMessage="Warning: Division by zero";
+                    console.log(displayResult.value);
                 }
+                
+                    switch (currentOperator) {
+                        case '+':
+                            result += number;
+                            break;
+                        case '-':
+                            result -= number;
+                            break;
+                        case '*':
+                            result *= number;
+                            break;
+                        case '/':
+                            result /= number;
+                            break;
+                        default:
+                            break;
+                    }
+                
             }
         }
     });
 
-    return result;
+    return errorMessage? errorMessage:result;
 }
